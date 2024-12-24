@@ -2,7 +2,7 @@
 
 A Node.js app that provides coupon redemption functionality, serving coupon data from a MariaDB database, and sending email notifications upon coupon redemption. The app uses Nodemailer to send emails via Mailjet and is served using PM2 for production.
 
-This was designed as part of a Christmas gift for my partner. Edit the HTML and create the database to match your own coupons. This could be useful for promotions or just as a cute gift for a significant other or someone special in your life.
+This web application features a customizable coupon app that allows users to create, display, and manage personalized coupons. Key functionalities include redeeming and disabling coupons. Originally designed as a Christmas gift for my partner, you can easily edit the HTML and create your own database to match your coupons. Whether for promotions or a thoughtful gift for a special someone, this app offers a fun and personalized experience.
 
 ## Features
 

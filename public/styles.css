@@ -1,0 +1,263 @@
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(45deg, #2c003e, #3d0053); /* Deep Synthwave Gradient */
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+h1, h2, h3 {
+  color: #ff00ff; /* Neon Pink */
+  text-align: center;
+  text-shadow: 0 0 4px #ff00ff, 0 0 8px #ff00ff; /* Reduced glow */
+}
+
+/* Add a fade-in animation when the page loads */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Button Styles with Animation */
+button {
+  background: linear-gradient(45deg, #ff00ff, #00ffff); /* Neon Pink to Aqua Gradient */
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 0 4px #ff00ff, 0 0 8px #00ffff; /* Reduced glow */
+}
+
+button:hover {
+  background: linear-gradient(45deg, #ff00ff, #ff1493);
+  transform: scale(1.1);
+  box-shadow: 0 0 6px #ff00ff, 0 0 12px #ff1493; /* Reduced glow */
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Coupon Card Styling with Animation */
+.coupon-card {
+  background: #212121; /* Dark background for cards */
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Reduced shadow */
+  padding: 20px;
+  margin: 15px 0;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: cardBounce 0.5s ease-in-out;
+}
+
+.coupon-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 255, 255, 0.3); /* Subtle glow */
+}
+
+.coupon-card img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ff00ff; /* Reduced glow */
+}
+
+.coupon-card h3 {
+  font-size: 1.5rem;
+  margin: 10px 0;
+  color: #ff1493; /* Neon Pink */
+}
+
+.coupon-card p {
+  font-size: 1.1rem;
+  color: #b0b0b0;
+  margin-bottom: 20px;
+}
+
+/* Animations for Coupon Cards */
+@keyframes cardBounce {
+  0% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Layout Styles */
+.container {
+  width: 80%;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+header {
+  background-color: #121212; /* Dark Synthwave Header */
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  border-bottom: 4px solid #ff00ff;
+  position: relative; /* To position child elements */
+}
+
+header h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+}
+
+.header-images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.header-img {
+  max-width: 100px; /* Adjust image size */
+  height: auto;
+  position: absolute; /* Position the images relative to the header */
+}
+
+header .header-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1; /* Ensure text is above images */
+}
+
+.header-img.left {
+  left: 10px; /* Adjust distance from the left edge */
+}
+
+.header-img.right {
+  right: 10px; /* Adjust distance from the right edge */
+}
+
+/* Coupons List Styling */
+.coupons-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.coupons-list .coupon-card {
+  background-color: #333; /* Dark background for cards */
+  border: 2px solid #ff00ff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(255, 0, 255, 0.3); /* Reduced glow */
+}
+.coupon-card.redeemed {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.redeem-btn:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+/* Form Styles */
+form {
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input[type="text"], input[type="number"], select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #ff00ff;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  margin: 10px 0;
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+  border-color: #00ffff;
+  outline: none;
+}
+
+input[type="submit"] {
+  background: linear-gradient(45deg, #ff00ff, #00ffff);
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 0 6px #ff00ff, 0 0 12px #00ffff; /* Reduced glow */
+}
+
+input[type="submit"]:hover {
+  background: linear-gradient(45deg, #ff00ff, #ff1493);
+  box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff1493; /* Reduced glow */
+}
+
+input[type="submit"]:active {
+  transform: scale(0.98);
+}
+
+/* Footer Styling */
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #121212;
+  color: white;
+  margin-top: 30px;
+}
+
+footer a {
+  color: #00ffff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+  color: #ff00ff;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .coupons-list {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 2.5rem;
+  }
+
+  .header-img {
+    max-width: 70px; /* Resize images for smaller screens */
+  }
+
+  button, input[type="submit"] {
+    width: 100%;
+  }
+
+  .moodeng-gallery {
+    flex-direction: column;
+  }
+}

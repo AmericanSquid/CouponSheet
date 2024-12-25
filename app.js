@@ -1,11 +1,12 @@
 const express = require('express');
 const mysql = require('mysql2');
-const app = express();
+const jwt = require('jsonwebtoken');
 const path = require('path');
 const nodemailer = require('nodemailer');
 
 // Set the port
-const PORT = process.env.PORT || 3001;
+const app = express();
+const PORT = process.env.PORT || 3002;
 
 // Create a connection to the MariaDB database
 require('dotenv').config();
@@ -25,8 +26,45 @@ db.connect((err) => {
     console.log('Connected to MariaDB');
 });
 
+// Middleware to parse JSON bodies
+app.use(express.json());
+
 // Serve static files (CSS, JS) from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware to Validate API Key
+const validateApiKey = (req, res, next) => {
+    const apiKey = req.headers['x-api-key']; // Look for the API key in the request headers
+    if (!apiKey || apiKey !== process.env.API_KEY) {
+        return res.status(403).json({ message: 'Forbidden: Invalid API Key' });
+    }
+    next();
+};
+
+// Generate JWT based on API key
+app.post('/generate-token', validateApiKey, (req, res) => {
+    const payload = { id: 1, role: 'user' }; // Example payload
+
+    // Generate JWT with expiry
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({ token });
+});
+
+// JWT Validation Middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Extract Bearer token
+
+    if (!token) return res.status(401).json({ message: 'Access Denied: No Token Provided' });
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
+        if (err) return res.status(403).json({ message: 'Invalid Token' });
+
+        req.user = payload; // Attach decoded payload to the request
+        next();
+    });
+};
 
 // Serve the homepage (index.html)
 app.get('/', (req, res) => {
@@ -34,13 +72,12 @@ app.get('/', (req, res) => {
 });
 
 // API route to get all coupons
-app.get('/coupons', (req, res) => {
+app.get('/coupons', authenticateToken, (req, res) => {
     db.query('SELECT * FROM coupons', (err, results) => {
         if (err) {
-            res.status(500).send('Error fetching coupons');
-            return;
+            return res.status(500).json({ message: 'Error fetching coupons' });
         }
-        res.json(results);  // Respond with coupon data in JSON format
+        res.json(results);
     });
 });
 
@@ -56,7 +93,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Redemption route
-app.post('/redeem/:id', (req, res) => {
+app.post('/redeem/:id', authenticateToken, (req, res) => {
     const couponId = req.params.id;
 
     // Check if the coupon is already redeemed

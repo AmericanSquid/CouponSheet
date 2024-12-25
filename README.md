@@ -39,13 +39,15 @@ npm install
 Create a .env file in the root of the project and add the following values:
 
 ```bash
-DB_USER=your_mariadb_user
-DB_PASS=your_mariadb_password
-MAILJET_USER=your_mailjet_api_user
-MAILJET_PASS=your_mailjet_api_password
+DB_USER=username
+DB_PASS=password
+JWT_SECRET=your_jwt_secret
+API_KEY=your_api_key
+MAILJET_USER=your_mailjet_username
+MAILJET_PASS=your_mailjet_apisecret
 ```
 
-Make sure to replace the placeholders with your actual database and Mailjet credentials.
+Make sure to replace the placeholders with your actual database and Mailjet credentials. You may use the 'generate-crypto' script provided to quickly generate an API Key and JWT Secret.
 
 ### 4. Set up MariaDB
 

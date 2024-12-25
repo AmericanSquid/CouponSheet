@@ -81,7 +81,7 @@ pm2 logs coupon-redemption-app
 
 ### 7. Access the app
 
-Once the app is running, you can access it at http://localhost:3001 or the specified port.
+Once the app is running, you can access it at http://localhost:3002 or the specified port.
 
 ## API Endpoints
 

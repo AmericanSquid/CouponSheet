@@ -1,19 +1,38 @@
 const express = require('express');
 const mysql = require('mysql2');
 const app = express();
+
 const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+
 const nodemailer = require('nodemailer');
 
+// Trust proxy settings
+app.set('trust proxy', true);
+
+// Redirect HTTP to HTTPS
+app.use((req, res, next) => {
+    if (req.secure) {
+        next();
+    } else {
+        res.redirect('https://' + req.headers.host + req.url);
+    }
+});
+
+// Load and validate environment variables
+const validateEnv = require('./config/validateEnv');
+const env = validateEnv();
+
 // Set the port
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 // Create a connection to the MariaDB database
 require('dotenv').config();
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: 'couponDB'
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 // Connect to the database
@@ -50,8 +69,8 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: process.env.MAILJET_USER,  // Read from environment variable
-        pass: process.env.MAILJET_PASS   // Read from environment variable
+        user: process.env.MJ_APIKEY_PUBLIC,
+        pass: process.env.MJ_APIKEY_PRIVATE
     }
 });
 
@@ -60,7 +79,7 @@ app.post('/redeem/:id', (req, res) => {
     const couponId = req.params.id;
 
     // Check if the coupon is already redeemed
-    const checkQuery = 'SELECT redeemed FROM coupons WHERE id = ?';
+    const checkQuery = 'SELECT id, title, description, redeemed FROM coupons WHERE id = ?';
     db.query(checkQuery, [couponId], (err, result) => {
         if (err) {
             return res.status(500).json({ success: false, message: 'Error checking coupon status' });
@@ -69,6 +88,8 @@ app.post('/redeem/:id', (req, res) => {
         if (result[0].redeemed) {
             return res.status(400).json({ success: false, message: 'Coupon already redeemed' });
         }
+	
+	const coupon = result[0];
 
         // Update the database to mark the coupon as redeemed
         const query = 'UPDATE coupons SET redeemed = 1 WHERE id = ?';
@@ -80,10 +101,10 @@ app.post('/redeem/:id', (req, res) => {
 
             // Send an email notification
             const mailOptions = {
-                from: 'donotreply@americansquid.com',
+                from: process.env.EMAIL_FROM,
                 to: 'matthew@americansquid.com',
-                subject: `Coupon Redeemed: ID ${couponId}`,
-                text: `A coupon with ID ${couponId} has just been redeemed!`
+                subject: `Coupon Redeemed: ID ${coupon.title}`,
+                text: `A coupon has been redeemed!\n\nTitle: ${coupon.title}\nDescription: ${coupon.description}`
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
@@ -105,5 +126,5 @@ app.use((req, res, next) => {
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${process.env.PORT}`);
 });

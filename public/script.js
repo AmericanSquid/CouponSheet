@@ -1,7 +1,5 @@
 fetch('/coupons')
     .then(response => response.json())
-    .then(data => {
-        console.log('Coupons response:', data); // Log the data
     .then(coupons => {
         const couponList = document.querySelector('.coupons-list');
         couponList.innerHTML = ''; // Clear existing coupons
@@ -56,4 +54,3 @@ function redeemCoupon(couponId) {
         alert('An error occurred while redeeming the coupon.');
     });
 }
-

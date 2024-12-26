@@ -1,13 +1,22 @@
-CouponSheet/
-├── public/                  # Client-side assets
-│   ├── index.html           # Main webpage for coupon redemption
-│   ├── styles.css           # Styling for the coupon interface
-│   └── script.js            # Frontend JavaScript for coupon interactions
-├── config/
-│   └── validateEnv.js       # Environment variable validation and security
-├── scripts/
-│   └── generate-secrets.js  # Generates secure cryptographic keys for the app
-├── app.js                   # Main Express server with routes and database logic
-├── .env.example             # Template showing required environment variables
-├── .gitignore               # Specifies which files Git should ignore
-└── package.json             # Project dependencies and scripts
+coupon-sheet/
+├── app.js                 # Main application server with routes and middleware
+├── config/              # Configuration management directory
+│   ├── database.js      # Database connection pool and settings
+│   └── validateEnv.js   # Environment variable validation
+├── node_modules/        # Project dependencies
+├── package.json         # Project metadata and dependencies
+├── package-lock.json    # Locked versions of dependencies
+├── public/             # Static files served to client
+│   ├── css/            # Stylesheet directory
+│   │   └── styles.css  # Main CSS styles
+│   ├── js/             # JavaScript directory
+│   │   └── main.js     # Client-side functionality
+│   ├── favicon.ico     # Site favicon
+│   └── index.html      # Main HTML page
+├── scripts/            # Utility scripts directory
+│   ├── backup-db.sh    # Database backup automation
+│   └── generate-crypto.js  # Secret key generation utility
+├── backups/            # Directory for database backup storage
+├── .env                # Environment variables (not in repo)
+├── .gitignore         # Git ignore rules
+└── structure.txt      # Project structure documentation

@@ -1,13 +1,13 @@
-coupon-app/
-├── node_modules/           # npm packages
-├── public/                 
-│   ├── index.html          # Main HTML file
-│   ├── styles.css          # Synthwave Themed CSS
-│   ├── script.js           # Frontend JavaScript
-├── app.js                  # Backend Server (app.js)
-├── .env                    # Environment Variables
-├── .gitignore              # Git Ignore
-├── package.json            # Project metadata & dependencies
-└── package-lock.json       # Lock file for npm packages
-
-
+CouponSheet/
+├── public/                  # Client-side assets
+│   ├── index.html           # Main webpage for coupon redemption
+│   ├── styles.css           # Styling for the coupon interface
+│   └── script.js            # Frontend JavaScript for coupon interactions
+├── config/
+│   └── validateEnv.js       # Environment variable validation and security
+├── scripts/
+│   └── generate-secrets.js  # Generates secure cryptographic keys for the app
+├── app.js                   # Main Express server with routes and database logic
+├── .env.example             # Template showing required environment variables
+├── .gitignore               # Specifies which files Git should ignore
+└── package.json             # Project dependencies and scripts

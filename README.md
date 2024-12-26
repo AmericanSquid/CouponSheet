@@ -36,7 +36,12 @@ npm install
 
 ### 3. Set up environment variables
 
-Create a .env file in the root of the project and add the following values:
+Copy the .env.example file to .env using the command: 
+```bash
+cp .env.example .env
+```
+
+Then edit the .env file to add your specific configuration values.
 
 ```bash
 DB_USER=username
@@ -46,8 +51,7 @@ API_KEY=your_api_key
 MAILJET_USER=your_mailjet_username
 MAILJET_PASS=your_mailjet_apisecret
 ```
-
-Make sure to replace the placeholders with your actual database and Mailjet credentials. You may use the 'generate-crypto' script provided to quickly generate an API Key and JWT Secret.
+You may comment out the JWT_SECRET and API_KEY fields, as these are for security features that are still being developed. Should you choose to implement them yourself, the generate-crypto.js script will output a random API key and JWT secret.
 
 ### 4. Set up MariaDB
 
@@ -63,7 +67,7 @@ CREATE TABLE coupons (
 
 ### 5. Start the app using PM2
 
-To run the app in the background using PM2, use the following commands:
+To run the app in the background using PM2, use the following command:
 
 ```bash
 pm2 start app.js --name coupon-redemption-app
@@ -81,7 +85,7 @@ pm2 logs coupon-redemption-app
 
 ### 7. Access the app
 
-Once the app is running, you can access it at http://localhost:3002 or the specified port.
+Once the app is running, you can access it at http://localhost:3001
 
 ## API Endpoints
 

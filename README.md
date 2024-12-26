@@ -5,12 +5,14 @@ A Node.js app that provides coupon redemption functionality, serving coupon data
 This web application features a customizable coupon app that allows users to create, display, and manage personalized coupons. Key functionalities include redeeming and disabling coupons. Originally designed as a Christmas gift for my partner, you can easily edit the HTML and create your own database to match your coupons. Whether for promotions or a thoughtful gift for a special someone, this app offers a fun and personalized experience.
 
 ## Features
-
-- Serve static files (CSS, JS) from the public folder.
-- API endpoint to fetch all coupons.
-- API endpoint for coupon redemption with email notification.
-- Environment variables for sensitive information (like Mailjet credentials).
-
+- Secure environment variable validation
+- HTTPS support with reverse proxy configuration
+- Detailed email notifications including coupon title and description
+- Cryptographic secret generation for enhanced security
+- Rate limiting support
+- MariaDB database integration
+- Mailjet email service integration
+  
 ## Requirements
 
 - Node.js (>= 14.x)
@@ -19,41 +21,34 @@ This web application features a customizable coupon app that allows users to cre
 
 ## Setup Instructions
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/yourusername/coupon-redemption-app.git
 cd coupon-redemption-app
 ```
 
-### 2. Install dependencies
-
-Install the required Node.js dependencies:
+### 2. Install Node.js Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Set up environment variables
+### 3. Generate Secrets
 
-Copy the .env.example file to .env using the command: 
+```bash
+node scripts/generate-secrets.js
+```
+
+### 4. Set Up Environment Variables
+
+Copy .env.example to .env and configure your environment variables:
+
 ```bash
 cp .env.example .env
 ```
 
-Then edit the .env file to add your specific configuration values.
-
-```bash
-DB_USER=username
-DB_PASS=password
-JWT_SECRET=your_jwt_secret
-API_KEY=your_api_key
-MAILJET_USER=your_mailjet_username
-MAILJET_PASS=your_mailjet_apisecret
-```
-You may comment out the JWT_SECRET and API_KEY fields, as these are for security features that are still being developed. Should you choose to implement them yourself, the generate-crypto.js script will output a random API key and JWT secret.
-
-### 4. Set up MariaDB
+### 4. Set Up MariaDB
 
 Ensure that you have a running MariaDB instance and that the couponDB database exists. The database should contain a table coupons with at least the following structure:
 
@@ -65,15 +60,13 @@ CREATE TABLE coupons (
 );
 ```
 
-### 5. Start the app using PM2
+### 5. Start the App Using PM2
 
-To run the app in the background using PM2, use the following command:
+PM2 will keep the app running in the background, even if the server restarts.
 
 ```bash
 pm2 start app.js --name coupon-redemption-app
 ```
-
-PM2 will keep the app running in the background, even if the server restarts.
 
 ### 6. (Optional) View logs
 
@@ -83,9 +76,18 @@ You can view the logs of your app using PM2 by running:
 pm2 logs coupon-redemption-app
 ```
 
-### 7. Access the app
+## Reverse Proxy Setup
+The application is configured to work behind a reverse proxy:
+- HTTPS termination handled at proxy level
+- Proxy trust settings enabled in Express
+- Secure headers configured for proxy forwarding
+- Default port 3001 for application server
 
-Once the app is running, you can access it at http://localhost:3001
+### Proxy Configuration Notes
+- Application expects X-Forwarded-Proto header
+- Configured to redirect HTTP to HTTPS
+- Handles SSL/TLS termination at proxy level
+- Maintains secure connections through proxy chain
 
 ## API Endpoints
 
@@ -132,20 +134,31 @@ Example Response (Failure - Coupon already redeemed):
 
 ## Troubleshooting
 
-- Ensure that your MariaDB instance is running and accessible.
-- If the images are not loading, make sure that they are in the public folder or its subdirectories, and that you're referencing them correctly in your HTML files (e.g., /images/your-image.jpg).
-- If PM2 isn't working as expected, try running the app manually with node server.js to identify potential errors.
+### Database Connection
+- Verify MariaDB credentials in .env file
+- Ensure database service is running: `systemctl status mariadb`
+- Check database permissions for user
+
+### Email Service
+- Verify Mailjet API credentials
+- Test email configuration
+- Check email logs in PM2: `pm2 logs coupon-sheet-app`
+
+### Environment Variables
+- Run `node scripts/generate-secrets.js` for new secure keys
+- Ensure all required variables from .env.example are set
+- Check permissions on .env file
+
+### Reverse Proxy
+- Verify proxy headers are being forwarded
+- Check HTTPS redirect is working
+- Confirm proxy is passing correct host headers
+
+### Common Error Codes
+- 500: Check server logs for database connection issues
+- 401: Environment variable or authentication problem
+- 502: Proxy configuration issue
 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-
-## Key Sections:
-
-- **Setup Instructions**: Detailed steps to install dependencies, set up environment variables, and configure MariaDB.
-- **PM2 Usage**: Instructions on how to use PM2 to start the app in production and view logs.
-- **API Endpoints**: Description of the available API endpoints (`GET /coupons` and `POST /redeem/:id`).
-- **Troubleshooting**: Tips for resolving common issues like database connection or static file serving problems.
-
-Make sure to update the `git clone` URL, database credentials, and any other project-specific details.

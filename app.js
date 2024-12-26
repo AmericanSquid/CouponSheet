@@ -1,11 +1,17 @@
+const path = require('path');
+
+// Load and validate environment variables
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+const validateEnv = require('./config/validateEnv');
+const env = validateEnv();
+
+// Imports 
 const express = require('express');
 const mysql = require('mysql2');
 const helmet = require('helmet');
 const cors = require('cors');
 const { body, param, query, validationResult } = require('express-validator');
 const app = express();
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const nodemailer = require('nodemailer');
 
 // Trust proxy settings
@@ -68,10 +74,6 @@ app.use(helmet({
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-// Load and validate environment variables
-const validateEnv = require('./config/validateEnv');
-const env = validateEnv();
-
 // Set the port
 const PORT = process.env.PORT;
 
@@ -110,34 +112,39 @@ app.get('/coupons', [
     query('page').trim().escape().optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
     query('limit').trim().escape().optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
 ], (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const query = 'SELECT * FROM coupons ORDER BY id LIMIT ? OFFSET ?';
-    
-    pool.execute(query, [limit, offset], (err, results) => {
-        if (err) {
-            console.error('Database Error:', err);
-            res.status(500).json({
-                error: 'Error fetching coupons',
-                details: err.message
-            });
-            return;
+    const countQuery = 'SELECT COUNT(*) as count FROM coupons';
+    const dataQuery = 'SELECT * FROM coupons ORDER BY id LIMIT ? OFFSET ?';
+
+    pool.query(countQuery, (countErr, countResults) => {
+        if (countErr) {
+            return res.status(500).json({ error: 'Database error' });
         }
-        res.json({
-            page: page,
-            limit: limit,
-            data: results
+
+        const totalItems = countResults[0].count;
+        const totalPages = Math.ceil(totalItems / limit);
+
+        pool.query(dataQuery, [limit, offset], (dataErr, results) => {
+            if (dataErr) {
+                return res.status(500).json({ error: 'Database error' });
+            }
+
+            res.json({
+                success: true,
+                data: results,
+                pagination: {
+                    currentPage: page,
+                    totalPages: totalPages,
+                    totalItems: totalItems,
+                    itemsPerPage: limit
+                }
+            });
         });
     });
 });
-
 
 // Configure Nodemailer Transport
 const transporter = nodemailer.createTransport({
@@ -173,7 +180,6 @@ app.post('/redeem/:id', [
 
         const coupon = result[0];
         const updateQuery = 'UPDATE coupons SET redeemed = 1 WHERE id = ?';
-
         pool.execute(updateQuery, [couponId], (err, result) => {
             if (err) {
                 console.error('Error updating coupon status:', err);
@@ -195,6 +201,7 @@ app.post('/redeem/:id', [
                     console.log('Email sent:', info.response);
                 }
             });
+
             return res.json({ success: true, message: 'Coupon redeemed successfully' });
         });
     });

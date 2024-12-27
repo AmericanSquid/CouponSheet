@@ -10,6 +10,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const helmet = require('helmet');
 const cors = require('cors');
+const validateApiKey = require('./config/apiAuth');
 const { body, param, query, validationResult } = require('express-validator');
 const app = express();
 const nodemailer = require('nodemailer');
@@ -107,8 +108,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Add this route to your server.js
+app.get('/api/config', (req, res) => {
+    res.json({
+        apiKey: process.env.API_KEY
+    });
+});
+
 // API route to get all coupons
-app.get('/coupons', [
+app.get('/coupons', validateApiKey, [
     query('page').trim().escape().optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
     query('limit').trim().escape().optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
 ], (req, res) => {
@@ -158,7 +166,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Redemption route
-app.post('/redeem/:id', [
+app.post('/redeem/:id', validateApiKey, [
     param('id').trim().escape().isInt().withMessage('Invalid coupon ID')
 ], (req, res) => {
     // Validate input

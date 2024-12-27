@@ -1,3 +1,13 @@
+let API_KEY;
+
+// Add this at the start of your script
+fetch('/api/config')
+    .then(response => response.json())
+    .then(config => {
+        API_KEY = config.apiKey;
+        fetchCoupons(1); // Initial load of coupons
+    });
+
 const ITEMS_PER_PAGE = 8;
 let currentPage = 1;
 
@@ -29,8 +39,15 @@ function createPaginationControls(currentPage, totalPages) {
 }
 
 function fetchCoupons(page = 1) {
-    fetch(`/coupons?page=${page}&limit=${ITEMS_PER_PAGE}`)
-        .then(response => response.json())
+    fetch(`/coupons?page=${page}&limit=${ITEMS_PER_PAGE}`, {
+        headers: {
+            'x-api-key': API_KEY
+        }
+    })
+    .then(response => {
+        console.log('Response received:', response.status);
+        return response.json();
+    })
         .then(response => {
             const couponList = document.querySelector('.coupons-list');
             couponList.innerHTML = '';
@@ -89,10 +106,12 @@ function redeemCoupon(couponId) {
     fetch(`/redeem/${couponId}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-api-key': API_KEY
         }
     })
-    .then(response => response.json())
+    .then(response => response.text())
+    .then(text => JSON.parse(text))
     .then(data => {
         if (data.success) {
             alert('Coupon redeemed successfully!');

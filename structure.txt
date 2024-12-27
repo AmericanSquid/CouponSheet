@@ -1,21 +1,21 @@
 coupon-sheet/
 ├── app.js                 # Main application server with routes and middleware
 ├── config/              # Configuration management directory
+│   ├── apiAuth.js       # API key validation
 │   ├── database.js      # Database connection pool and settings
 │   └── validateEnv.js   # Environment variable validation
 ├── node_modules/        # Project dependencies
 ├── package.json         # Project metadata and dependencies
 ├── package-lock.json    # Locked versions of dependencies
 ├── public/             # Static files served to client
-│   ├── css/            # Stylesheet directory
-│   │   └── styles.css  # Main CSS styles
-│   ├── js/             # JavaScript directory
-│   │   └── main.js     # Client-side functionality
+│   ├── images/         # Images for main HTML page
+│   ├── styles.css      # Main CSS Styles
+│   ├── script.js       # Client-side functionality
 │   ├── favicon.ico     # Site favicon
 │   └── index.html      # Main HTML page
 ├── scripts/            # Utility scripts directory
-│   ├── backup-db.sh    # Database backup automation
-│   └── generate-crypto.js  # Secret key generation utility
+│   ├── generatesecrets.js # Generates session and crypto secrets
+│   └── generateApiKey.js  # Generates an API Key
 ├── backups/            # Directory for database backup storage
 ├── .env                # Environment variables (not in repo)
 ├── .gitignore         # Git ignore rules
